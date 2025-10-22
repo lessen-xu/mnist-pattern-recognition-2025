@@ -1,166 +1,107 @@
-# MNIST Pattern Recognition – Exercise 2
+# MNIST Pattern Recognition
 
 ## 👥 Team & Roles
-| Role | Members | Description |
-|------|----------|--------------|
-| **A&E (Lead / Integration)** | Lishang Xu, Songzhi Liu | Project structure, dataset loader, final report & merging |
-| **B (SVM)** | Bole Yi | SVM with linear & RBF kernels, hyperparameter tuning via CV |
-| **C (MLP)** | Yuting Zhu | MLP with 1–2 hidden layers, tuning hidden size & learning rate |
-| **D (CNN)** | Jules | CNN with different kernel sizes & layers, tuning learning rate |
 
----
+| Role | Members | Task |
+|------|----------|------|
+| **A\&E (Lead / Integration)** | Lishang Xu, Songzhi Liu| Project setup, data loader, report & integration |
+| **B (SVM)** | Bole Yi | SVM with linear & RBF kernels |
+| **C (MLP)** | Yuting Zhu | MLP model & hyperparameter tuning |
+| **D (CNN)** | Jules | CNN design & training |
 
-## 🧭 Project Structure
+-----
+
+## 📁 Project Structure
 
 ```
 mnist-pattern-recognition-2025/
-├── cnn/                # Jules
-│   └── train_cnn.py
-├── mlp/                # Yuting Zhu
-│   └── train_mlp.py
-├── svm/                # Bole Yi
-│   └── train_svm.py
-├── utils/              # Shared utilities
-│   └── dataset_loader.py
-├── report/             # Final report (Markdown or PDF)
-│   └── report.md
+├── cnn/                # CNN model (Jules)
+├── mlp/                # MLP model (Yuting)
+├── svm/                # SVM model (Bole)
+├── utils/              # Shared tools (data loader)
+├── report/             # Results & report
 ├── data/               # Local dataset (ignored by git)
-│   ├── train/
-│   ├── test/
-│   ├── gt-train.tsv
-│   └── gt-test.tsv
 ├── requirements.txt
 └── README.md
 ```
 
----
+-----
 
-## 🔒 Branch Policy
-
-- **main**: Protected. Only merged via Pull Request (PR).  
-- **feature branches**:  
-  - `feature/svm-bole-yi`  
-  - `feature/mlp-yuting-zhu`  
-  - `feature/cnn-jules`  
-- **infra/**: AE setup & integration branches.
-
----
-
-## ⚙️ Setup Environment
+## ⚙️ Environment Setup
 
 ```bash
-# Create virtual environment
+# Create and activate a virtual environment
 python -m venv .venv
+.\.venv\Scripts\activate    # (Windows)
+# source .venv/bin/activate  # (Linux/macOS)
 
-# Activate
-# Windows
-.\.venv\Scripts\activate
-# macOS/Linux
-# source .venv/bin/activate
-
-# Install dependencies
+# Install required packages
 pip install -r requirements.txt
 ```
 
----
+### 💾 Data
 
-## 💾 Data Preparation
-
-Download and unzip the **Full MNIST Dataset** (provided by course).  
-Place it under the `data/` folder like this:
+Place the full MNIST dataset under the `data/` directory:
 
 ```
 data/
-  ├─ train/0/*.png ... train/9/*.png
-  ├─ test/0/*.png  ... test/9/*.png
+  ├─ train/0/ ... train/9/
+  ├─ test/0/ ... test/9/
   ├─ gt-train.tsv
   └─ gt-test.tsv
 ```
 
-This folder is **ignored by Git** (listed in `.gitignore`).
+### 🧰 Data Loader
 
----
+All models share the same data loader interface provided in `utils/dataset_loader.py`.
 
-## 📦 Unified Dataset Loader
+**For PyTorch (MLP / CNN)**
 
-All models use the same dataset interface in `utils/dataset_loader.py`.
-
-### 🔹 For PyTorch (MLP / CNN)
 ```python
 from utils.dataset_loader import get_loaders
-
-train_loader, val_loader, test_loader = get_loaders(data_root="data", val_ratio=0.1)
+train_loader, val_loader, test_loader = get_loaders(data_root="data")
 ```
 
-### 🔹 For sklearn (SVM)
+**For sklearn (SVM)**
+
 ```python
 from utils.dataset_loader import get_numpy_data
-
-(Xtr, ytr), (Xval, yval), (Xte, yte) = get_numpy_data(data_root="data", val_ratio=0.1)
+(Xtr, ytr), (Xval, yval), (Xte, yte) = get_numpy_data(data_root="data")
 ```
 
----
+-----
 
-## 🚀 Running Each Model
+## 🚀 Running Models
 
-### 🧠 SVM (Bole Yi)
+Each script should be run from the root of the project.
+
 ```bash
-python svm/train_svm.py --val-ratio 0.1 --results-dir svm/results
+# SVM
+python svm/train_svm.py
+
+# MLP
+python mlp/train_mlp.py
+
+# CNN
+python cnn/train_cnn.py
 ```
 
-### 🔢 MLP (Yuting Zhu)
-```bash
-python mlp/train_mlp.py --epochs 20 --batch-size 128 --results-dir mlp/results
-```
+Each model will save its results under its own `results/` folder (e.g., `svm/results/`):
 
-### 🧩 CNN (Jules)
-```bash
-python cnn/train_cnn.py --epochs 20 --batch-size 128 --results-dir cnn/results
-```
+  * **train\_curve.png** – Training & validation curves
+  * **cv\_results.csv** – (SVM only) Cross-validation summary
+  * **test\_accuracy.json** – Final test accuracy
 
----
+-----
 
-## 📊 Expected Outputs
+## 📊 Report
 
-Each model should generate results in its own `results/` folder:
+The final report is stored in `report/` and includes:
 
-| File | Description |
-|------|--------------|
-| `train_curve.png` | Loss/accuracy curves on train & validation sets |
-| `cv_results.csv` | (SVM only) Hyperparameter cross-validation table |
-| `test_accuracy.json` | Final accuracy and parameters on the test set |
+  * Accuracy comparison (SVM vs MLP vs CNN)
+  * Plots of training curves
+  * A short discussion of the results
 
----
+-----
 
-## 🧾 Final Report (A&E)
-
-The final report should include:
-
-1. Overview of dataset & preprocessing  
-2. Method description for SVM, MLP, CNN  
-3. Training/validation curves  
-4. Cross-validation results  
-5. Final test accuracies comparison  
-6. Discussion on model performance & optimization
-
-Report stored in: `report/report.md` or `report/report.pdf`
-
----
-
-## 📧 Submission
-
-- Repository: https://github.com/lessen-xu/mnist-pattern-recognition-2025  
-- Send link to **michael.jungo@unifr.ch**  
-- If repo is private: add user **jungomi** with *Read* access.  
-- Deadline: **Nov 5, 2025 (end of day)**
-
----
-
-## 🧩 Notes
-- Do **not** touch the test set until final evaluation.
-- Use the validation split to tune hyperparameters.
-- Keep code modular; each model runs independently.
-- Only A&E handles final merging & report formatting.
-
----
-© University of Fribourg · Department of Informatics · Autumn Semester 2025
+© 2025 · University of Fribourg · Pattern Recognition
