@@ -1,0 +1,3 @@
+Best CV accuracy: 0.9705
+Best params: {'svc__C': 10, 'svc__gamma': 0.001, 'svc__kernel': 'rbf'}
+Test accuracy: 0.9746
