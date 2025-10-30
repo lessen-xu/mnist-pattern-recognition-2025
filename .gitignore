@@ -7,3 +7,13 @@ data/
 **/results/*
 .vscode/
 .idea/
+
+/MNIST-full/
+/train/
+/test/
+/gt-*.tsv
+*.joblib
+*.zip
+*.npy
+*.pkl
+
